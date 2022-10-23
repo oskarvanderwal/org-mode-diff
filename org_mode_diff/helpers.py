@@ -2,7 +2,7 @@ import collections
 import difflib
 import functools
 
-from models import DiffTuple
+from org_mode_diff.models import DiffTuple
 
 
 def score_zip(zip_result):

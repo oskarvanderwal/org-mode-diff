@@ -70,7 +70,7 @@ class TestPairSimilarItems(unittest.TestCase):
             DiffTuple(self.item2, self.item2),
         )
 
-        self.assertEquals(
+        self.assertEqual(
             pair_up_subtrees(
                 DiffTuple(first_set_of_items, second_set_of_items)),
             expected
@@ -91,7 +91,7 @@ class TestPairSimilarItems(unittest.TestCase):
             DiffTuple(self.item2, None),
         )
 
-        self.assertEquals(
+        self.assertEqual(
             pair_up_subtrees(
                 DiffTuple(first_set_of_items, second_set_of_items)),
             expected
@@ -112,7 +112,7 @@ class TestPairSimilarItems(unittest.TestCase):
             DiffTuple(None, self.item2),
         )
 
-        self.assertEquals(
+        self.assertEqual(
             pair_up_subtrees(
                 DiffTuple(first_set_of_items, second_set_of_items)),
             expected
@@ -136,7 +136,7 @@ class TestPairSimilarItems(unittest.TestCase):
             DiffTuple(self.item3, self.item3),
         )
 
-        self.assertEquals(
+        self.assertEqual(
             pair_up_subtrees(
                 DiffTuple(first_set_of_items, second_set_of_items)),
             expected
@@ -160,7 +160,7 @@ class TestPairSimilarItems(unittest.TestCase):
             DiffTuple(self.item3, self.item3),
         )
 
-        self.assertEquals(
+        self.assertEqual(
             pair_up_subtrees(
                 DiffTuple(first_set_of_items, second_set_of_items)),
             expected
@@ -186,7 +186,7 @@ class TestPairSimilarItems(unittest.TestCase):
         # (None, 1)
         # For now, just test that there are 3 pairs
 
-        self.assertEquals(
+        self.assertEqual(
             len(pair_up_subtrees(DiffTuple(first_set_of_items, second_set_of_items))), 3)
 
     def test_different_item(self):
@@ -206,7 +206,7 @@ class TestPairSimilarItems(unittest.TestCase):
             DiffTuple(None, self.item3),
         )
 
-        self.assertEquals(
+        self.assertEqual(
             pair_up_subtrees(
                 DiffTuple(first_set_of_items, second_set_of_items)),
             expected
@@ -295,7 +295,7 @@ class TestStructDiff(unittest.TestCase):
     def test_struct_diff(self):
         diff = struct_diff(
             DiffTuple(self.old, self.new), False, supress_output=True)
-        self.assertEquals(diff, [
+        self.assertEqual(diff, [
             DiffResult(type='diff', prefix='',
                        string='--- old\n+++ new\n@@ -1 +1 @@\n-New Top-level comments\n+Top-level comments'),
             DiffResult(type='comment', prefix='[updated]', string='* Item1'),
@@ -309,7 +309,7 @@ class TestStructDiff(unittest.TestCase):
     def test_struct_diff_headers_only(self):
         diff = struct_diff(
             DiffTuple(self.old, self.new), True, supress_output=True)
-        self.assertEquals(diff, [
+        self.assertEqual(diff, [
             DiffResult(type='comment', prefix='[updated]', string='* Item1'),
             DiffResult(type='diff', prefix='-', string='** Item2'),
             DiffResult(type='diff', prefix='+', string='** New name'),

@@ -15,7 +15,7 @@ def properties(org):
     property_box = ""
     data = ""
 
-    for key, value in org.iteritems():
+    for key, value in org.items():
         if key == "SCHEDULED":
             data += "SCHEDULED: %s " % (value,)
         elif key == "DEADLINE":
@@ -35,8 +35,8 @@ def properties(org):
 
 def output_org(org):
     if org.orgheading is not None:
-        print output_org_header(org.orgheading)
-    print properties(org.properties)
+        print(output_org_header(org.orgheading))
+    print(properties(org.properties))
 
     for subtree in org.subtrees:
         output_org(subtree)

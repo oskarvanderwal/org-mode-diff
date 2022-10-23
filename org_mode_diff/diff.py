@@ -1,13 +1,13 @@
 import difflib
 
 import config
-from helpers import smart_zip
-from helpers import _sequence_similarity_ratio
-from printer import output_org_header
-from printer import output_org
-from models import getattrs_from_diff
-from models import DiffTuple
-from models import DiffResult
+from org_mode_diff.helpers import smart_zip
+from org_mode_diff.helpers import _sequence_similarity_ratio
+from org_mode_diff.printer import output_org_header
+from org_mode_diff.printer import output_org
+from org_mode_diff.models import getattrs_from_diff
+from org_mode_diff.models import DiffTuple
+from org_mode_diff.models import DiffResult
 
 def flatten_list_of_lists(lists):
     return sum(lists, [])
@@ -15,7 +15,7 @@ def flatten_list_of_lists(lists):
 
 def print_diff(diff):
     for item in diff:
-        print " ".join((item.prefix, str(item.string)))
+        print(" ".join((item.prefix, str(item.string))))
 
 
 def struct_diff(diff_tuple, headers_only, supress_output=False):
@@ -37,7 +37,7 @@ def struct_diff(diff_tuple, headers_only, supress_output=False):
         diff.extend(diff_org_tree(subtree_diff_pair, headers_only))
 
     if not supress_output:
-        print_diff(filter(None, diff))
+        print_diff([_f for _f in diff if _f])
 
     return diff
 
@@ -177,7 +177,7 @@ def diff_org_tree(org_tree_diff_tuple, headers_only):
     for diff_tuple in pair_up_subtrees(getattrs_from_diff(org_tree_diff_tuple, 'subtrees')):
         diff_results.extend(diff_org_tree(diff_tuple, headers_only))
 
-    return filter(None, diff_results)
+    return [_f for _f in diff_results if _f]
 
 
 def diff_properties(diff_tuple):

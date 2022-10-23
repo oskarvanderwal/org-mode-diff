@@ -1,7 +1,7 @@
 import re
-from models import OrgHeading
-from models import OrgTree
-import config
+from org_mode_diff.models import OrgHeading
+from org_mode_diff.models import OrgTree
+import org_mode_diff.config as config
 
 
 class OrgParserException(Exception):
