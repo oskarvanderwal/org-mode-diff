@@ -1,7 +1,6 @@
 import difflib
 
-import config
-
+import org_mode_diff.config as config
 from org_mode_diff.helpers import _sequence_similarity_ratio, smart_zip
 from org_mode_diff.models import DiffResult, DiffTuple, getattrs_from_diff
 from org_mode_diff.printer import output_org, output_org_header
