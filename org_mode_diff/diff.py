@@ -1,13 +1,11 @@
 import difflib
 
 import config
-from org_mode_diff.helpers import smart_zip
-from org_mode_diff.helpers import _sequence_similarity_ratio
-from org_mode_diff.printer import output_org_header
-from org_mode_diff.printer import output_org
-from org_mode_diff.models import getattrs_from_diff
-from org_mode_diff.models import DiffTuple
-from org_mode_diff.models import DiffResult
+
+from org_mode_diff.helpers import _sequence_similarity_ratio, smart_zip
+from org_mode_diff.models import DiffResult, DiffTuple, getattrs_from_diff
+from org_mode_diff.printer import output_org, output_org_header
+
 
 def flatten_list_of_lists(lists):
     return sum(lists, [])
@@ -30,10 +28,11 @@ def struct_diff(diff_tuple, headers_only, supress_output=False):
     diff = []
 
     if not headers_only:
-        diff.append(
-            diff_strings(getattrs_from_diff(diff_tuple, "text_content")))
+        diff.append(diff_strings(getattrs_from_diff(diff_tuple, "text_content")))
 
-    for subtree_diff_pair in pair_up_subtrees(getattrs_from_diff(diff_tuple, "subtrees")):
+    for subtree_diff_pair in pair_up_subtrees(
+        getattrs_from_diff(diff_tuple, "subtrees")
+    ):
         diff.extend(diff_org_tree(subtree_diff_pair, headers_only))
 
     if not supress_output:
@@ -54,8 +53,8 @@ def simple_diff(diff_tuple):
         new = ""
 
     return [
-        DiffResult('diff', "-", old),
-        DiffResult('diff', "+", new),
+        DiffResult("diff", "-", old),
+        DiffResult("diff", "+", new),
     ]
 
 
@@ -66,19 +65,17 @@ def diff_tuples_or_string(diff_tuple):
         return []
 
     if new is None:
-        return [DiffResult('diff', "-", old)]
+        return [DiffResult("diff", "-", old)]
 
     if old is None:
-        return [DiffResult('diff', "+", new)]
+        return [DiffResult("diff", "+", new)]
 
     if isinstance(old, str) or isinstance(new, str):
         return simple_diff(diff_tuple)
     else:
         # If this is a nested structure, recurse
         return flatten_list_of_lists(
-            diff_tuples_or_string(DiffTuple(o, n))
-            for o, n
-            in zip(old, new)
+            diff_tuples_or_string(DiffTuple(o, n)) for o, n in zip(old, new)
         )
 
 
@@ -92,14 +89,18 @@ def diff_strings(diff_tuple):
             new = ""
 
         return DiffResult(
-            'diff',
-            '',
-            '\n'.join(difflib.unified_diff(
-                old.split('\n'),
-                new.split('\n'),
-                fromfile="old",
-                tofile="new",
-                lineterm="")))
+            "diff",
+            "",
+            "\n".join(
+                difflib.unified_diff(
+                    old.split("\n"),
+                    new.split("\n"),
+                    fromfile="old",
+                    tofile="new",
+                    lineterm="",
+                )
+            ),
+        )
 
 
 def _simplify_org_tree(tree):
@@ -123,7 +124,10 @@ def org_items_are_similar(old, new):
     if simplified_old == simplified_new:
         return True
     # If they're close enough, we're done here.
-    if _sequence_similarity_ratio(simplified_old, simplified_new) > config.similarity_ratio_requirements:
+    if (
+        _sequence_similarity_ratio(simplified_old, simplified_new)
+        > config.similarity_ratio_requirements
+    ):
         return True
 
     return False
@@ -140,41 +144,49 @@ def diff_org_tree(org_tree_diff_tuple, headers_only):
 
     # either these items are the same...
     if old == new:
-        return [DiffResult('comment', "#", output_org_header(new.orgheading))]
+        return [DiffResult("comment", "#", output_org_header(new.orgheading))]
     # or one of them is new...
     if old is None:
-        return [DiffResult('diff', "+", output_org_header(new.orgheading))]
+        return [DiffResult("diff", "+", output_org_header(new.orgheading))]
     elif new is None:
-        return [DiffResult('diff', "-", output_org_header(old.orgheading))]
+        return [DiffResult("diff", "-", output_org_header(old.orgheading))]
 
     # or something more subtle has changed
 
     diff_results = [
-        DiffResult('comment', "[updated]", output_org_header(new.orgheading))]
+        DiffResult("comment", "[updated]", output_org_header(new.orgheading))
+    ]
 
-    diff_results.extend(diff_tuples_or_string(
-        getattrs_from_diff(org_tree_diff_tuple, 'orgheading')))
+    diff_results.extend(
+        diff_tuples_or_string(getattrs_from_diff(org_tree_diff_tuple, "orgheading"))
+    )
 
-    diff_results.extend(diff_properties(
-        getattrs_from_diff(org_tree_diff_tuple, 'properties')))
+    diff_results.extend(
+        diff_properties(getattrs_from_diff(org_tree_diff_tuple, "properties"))
+    )
 
     if not headers_only:
-        diff_results.append(diff_strings(
-            getattrs_from_diff(org_tree_diff_tuple, 'text_content')))
+        diff_results.append(
+            diff_strings(getattrs_from_diff(org_tree_diff_tuple, "text_content"))
+        )
 
     schedule_info = diff_tuples_or_string(
-        getattrs_from_diff(org_tree_diff_tuple, 'scheduled'))
+        getattrs_from_diff(org_tree_diff_tuple, "scheduled")
+    )
     if schedule_info:
-        diff_results.append(DiffResult('comment', "#", "scheduled"))
+        diff_results.append(DiffResult("comment", "#", "scheduled"))
         diff_results.extend(schedule_info)
 
     deadline_info = diff_tuples_or_string(
-        getattrs_from_diff(org_tree_diff_tuple, 'deadline'))
+        getattrs_from_diff(org_tree_diff_tuple, "deadline")
+    )
     if schedule_info:
-        diff_results.append(DiffResult('comment', "#", "deadline"))
+        diff_results.append(DiffResult("comment", "#", "deadline"))
         diff_results.extend(deadline_info)
 
-    for diff_tuple in pair_up_subtrees(getattrs_from_diff(org_tree_diff_tuple, 'subtrees')):
+    for diff_tuple in pair_up_subtrees(
+        getattrs_from_diff(org_tree_diff_tuple, "subtrees")
+    ):
         diff_results.extend(diff_org_tree(diff_tuple, headers_only))
 
     return [_f for _f in diff_results if _f]
@@ -186,6 +198,7 @@ def diff_properties(diff_tuple):
 
     return flatten_list_of_lists(
         diff_tuples_or_string(property_diff_tuple)
-        for property_diff_tuple
-        in smart_zip(diff_tuple, similarity_function=get_property_key)
+        for property_diff_tuple in smart_zip(
+            diff_tuple, similarity_function=get_property_key
+        )
     )

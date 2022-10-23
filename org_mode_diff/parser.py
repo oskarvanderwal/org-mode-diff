@@ -1,7 +1,7 @@
 import re
-from org_mode_diff.models import OrgHeading
-from org_mode_diff.models import OrgTree
+
 import org_mode_diff.config as config
+from org_mode_diff.models import OrgHeading, OrgTree
 
 
 class OrgParserException(Exception):
@@ -13,7 +13,7 @@ def first_word(string):
 
 
 def rest_of_words(string):
-    return ' '.join(string.split()[1:])
+    return " ".join(string.split()[1:])
 
 
 def parse_org_header(line):
@@ -55,14 +55,12 @@ def parse_org_header(line):
     # Now we try to pull out a status out of the string
     if first_word(raw_maybe_priority_todo_title) in config.status_values:
         todo = first_word(raw_maybe_priority_todo_title)
-        raw_maybe_priority_todo_title = rest_of_words(
-            raw_maybe_priority_todo_title)
+        raw_maybe_priority_todo_title = rest_of_words(raw_maybe_priority_todo_title)
 
     # and the same for priority
-    if raw_maybe_priority_todo_title.startswith('[#'):
+    if raw_maybe_priority_todo_title.startswith("[#"):
         priority = first_word(raw_maybe_priority_todo_title)
-        raw_maybe_priority_todo_title = rest_of_words(
-            raw_maybe_priority_todo_title)
+        raw_maybe_priority_todo_title = rest_of_words(raw_maybe_priority_todo_title)
 
     # whatever is left is the title
     title = raw_maybe_priority_todo_title
@@ -71,15 +69,11 @@ def parse_org_header(line):
     if raw_tags is None:
         tags = tuple()
     else:
-         # remove the first and last :, and split the rest into a list
-        tags = tuple(raw_tags[1:-1].split(':'))
+        # remove the first and last :, and split the rest into a list
+        tags = tuple(raw_tags[1:-1].split(":"))
 
     return OrgHeading(
-        star_count=star_count,
-        title=title,
-        priority=priority,
-        todo=todo,
-        tags=tags
+        star_count=star_count, title=title, priority=priority, todo=todo, tags=tags
     )
 
 
@@ -127,7 +121,7 @@ class OrgModeFileParser(object):
         return line.strip() == ":PROPERTIES:"
 
     def consume(self, line):
-        """Consumes a line of an org-mode file. 
+        """Consumes a line of an org-mode file.
         Returns an org tree if we've reached the beginning of a new org tree, otherwise None.
         """
 
@@ -190,8 +184,7 @@ class OrgModeFileParser(object):
                     key, value = result.groups()
                     self.properties[key] = value
                 else:
-                    raise OrgParserException(
-                        ":PROPERTIES: missing :END:\n%s", line)
+                    raise OrgParserException(":PROPERTIES: missing :END:\n%s", line)
         else:
             self.content += line
 

@@ -2,8 +2,8 @@
 import argparse
 
 from org_mode_diff.diff import struct_diff
-from org_mode_diff.parser import parse_lines
 from org_mode_diff.models import DiffTuple
+from org_mode_diff.parser import parse_lines
 
 
 def process_filename(filename):
